@@ -1,0 +1,35 @@
+<div class="container-fluid m-0 p-0 bg-primary" style="height: 100vh; overflow: hidden !important;">
+
+    <div class="row my-5">
+
+
+        <div class="col-md-3 my-5 me-5" style="height: 400px;">
+            <div class="card shadow p-4" style="height: 400px !important;">
+            
+                <form [formGroup] = "adminLoginData" (ngSubmit)="adminLogin()"> <!--podatki se shranijo v adminLogiData pod ustreznimi imeni spremenljivk-->
+                    <h4 class="text-primary">Admin login</h4>
+                    <div class="my-3">
+                      <label for="emailInput">Email naslov: </label>
+                      <input type="email" class="form-control" id="emailInput" placeholder="email naslov" formControlName = "username"> <!--dostopamo adminLoginData.value.username-->
+                      <div *ngIf="adminLoginData.controls.username.invalid && adminLoginData.controls.username.touched && adminLoginData.controls.username.errors"><!-- ce uporabnik klikne na polje in ga nato pusti praznega ali pa email ni pravilno formuliran, je error-->
+                      
+                        <div *ngIf="adminLoginData.controls.username.errors['required']" style="color:red;">Email ne sme biti prazen!</div> <!--za prazno polje-->
+                        <div *ngIf="adminLoginData.controls.username.errors['email']" style="color:red;">Email ni pravilno formuliran!</div><!--za nepracvilno formulacijo-->
+                      
+                      </div> 
+
+                    </div>
+                    <div class="form-group">
+                      <label for="passwordInput">Geslo: </label>
+                      <input type="password" class="form-control" id="passwordInput" placeholder="geslo" formControlName = "password">
+                      <div *ngIf="adminLoginData.controls.password.invalid && adminLoginData.controls.password.touched" style="color:red;">Geslo ne sme biti prazeno!</div><!--tukaj nas zanima le ali je prazno-->
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-outline-primary mr-2 ms-auto" [disabled]="adminLoginData.invalid">Login</button> <!--dokler je data invalid gumba ne bomo mogli klikniti-->
+                  </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>

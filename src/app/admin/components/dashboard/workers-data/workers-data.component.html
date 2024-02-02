@@ -1,0 +1,276 @@
+<div class="container-fluid">
+
+    <!--prva vrstica operacije-->
+    <div class="row text-center mt-3">
+        
+        <div class="col-md-4">
+            <a href="" style="text-decoration: none;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h6 class="text-primary"><strong>Add Worker</strong></h6>
+                        <p class="text-primary"><strong>+</strong></p>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+
+        <div class="col-md-4">
+            <a href="" style="text-decoration: none;">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h6 class="text-primary"><strong>Number of workers</strong></h6>
+                        <p class="text-primary"><strong>{{ totalRows }}</strong></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <!--druga vrstica-->
+    <div class="row pe-2 mt-3">
+        <div class="col-sm-12 text-center">
+            <div>
+                <div class="card-shadow">
+                    <div class="card-body">
+                        <h5 class="text-primary">
+                            <b>List of all Workers</b>
+                        </h5>
+
+                        <table class="table table-hover mt-3">
+                            <thead>
+                                <tr>
+                                  <th scope="col">Name</th>
+                                  <th scope="col">Surname</th>
+                                  <th scope="col">Id</th>
+                                  <th scope="col">Working position</th>
+                                  <th scope="col">Date of joining</th>
+                                  <th scope="col">Date of birth</th>
+                                  <th scope="col">Email</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let worker of allWorkers">
+                                  <td>{{worker.name}}</td>
+                                  <td>{{worker.surname}}</td>
+                                  <td>{{worker.id}}</td>
+                                  <td>{{worker.workingPosition}}</td>
+                                  <td>{{worker.doy}}</td>
+                                  <td>{{worker.dob}}</td>
+                                  <td>{{worker.email}}</td>
+                                  <td>
+                                    <button type="button" class="btn btn-outline-secondary me-2" (click)="getWorker(worker)" data-bs-toggle="modal" data-bs-target="#viewModal">View</button>
+                                    <button type="button" class="btn btn-outline-primary me-2" (click)="getWorker(worker)" data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+                                    <button type="button" class="btn btn-outline-danger" (click)="deleteWorker(worker)">Delete</button>
+                                  </td>
+                                </tr>
+                              </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!--dodaj delavca-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" id="exampleModalLabel"><b>Add Worker</b></h5>
+                </div>
+                <div class="modal-body">
+
+                    <form [formGroup]="workerDetailsForm" (ngSubmit)="addNewWorker()"> <!--se podatki navezejo na workerDetailsForm, ob kliku na submit se izvede ta metoda v workers-data-com.ts-->
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingName" placeholder="full name" formControlName="name"> <!--rabimo formControlName da vemo na kaj se veze podatek-->
+                            <label for="floatingName">Name</label>
+                            <div *ngIf="workerDetailsForm.controls.name.invalid && workerDetailsForm.controls.name.touched && workerDetailsForm.controls.name.errors"><!-- ce uporabnik klikne na polje in ga nato pusti praznega ali pa email ni pravilno formuliran, je error-->
+                                <div *ngIf="workerDetailsForm.controls.name.errors['required']" style="color:red;">Name must not be empty</div> <!--za prazno polje-->
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingSurname" placeholder="full surname" formControlName="surname">
+                            <label for="floatingSurname">Surname</label>
+                            <div *ngIf="workerDetailsForm.controls.surname.invalid && workerDetailsForm.controls.surname.touched && workerDetailsForm.controls.surname.errors">
+                                <div *ngIf="workerDetailsForm.controls.surname.errors['required']" style="color:red;">Surname must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingId" placeholder="full id" formControlName="id">
+                            <label for="floatingId">Id</label>
+                            <div *ngIf="workerDetailsForm.controls.id.invalid && workerDetailsForm.controls.id.touched && workerDetailsForm.controls.id.errors">
+                                <div *ngIf="workerDetailsForm.controls.id.errors['required']" style="color:red;">Id must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingWorkingPosition" placeholder="full working position title" formControlName="workingPosition">
+                            <label for="floatingWorkingPosition">Working position</label>
+                            <div *ngIf="workerDetailsForm.controls.workingPosition.invalid && workerDetailsForm.controls.workingPosition.touched && workerDetailsForm.controls.workingPosition.errors">
+                                <div *ngIf="workerDetailsForm.controls.workingPosition.errors['required']" style="color:red;">Working position must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="floatingDateOfJoining" formControlName="doy">
+                            <label for="floatingDateOfJoining">Date of Joining</label>
+                            <div *ngIf="workerDetailsForm.controls.doy.invalid && workerDetailsForm.controls.doy.touched && workerDetailsForm.controls.doy.errors">
+                                <div *ngIf="workerDetailsForm.controls.doy.errors['required']" style="color:red;">Date of joining must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="floatingDateOfBirth" formControlName="dob">
+                            <label for="floatingDateOfBirth">Date of Birth</label>
+                            <div *ngIf="workerDetailsForm.controls.dob.invalid && workerDetailsForm.controls.dob.touched && workerDetailsForm.controls.dob.errors">
+                                <div *ngIf="workerDetailsForm.controls.dob.errors['required']" style="color:red;">Date of birth must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="floatingEmail" placeholder="full email" formControlName="email">
+                            <label for="floatingEmail">Email</label>
+                            <div *ngIf="workerDetailsForm.controls.email.invalid && workerDetailsForm.controls.email.touched && workerDetailsForm.controls.email.errors"><!-- ce uporabnik klikne na polje in ga nato pusti praznega ali pa email ni pravilno formuliran, je error-->
+                      
+                                <div *ngIf="workerDetailsForm.controls.email.errors['required']" style="color:red;">Email must not be empty</div> 
+                                <div *ngIf="workerDetailsForm.controls.email.errors['email']" style="color:red;">Email is not correctly formulated</div>
+                              
+                              </div> 
+                        </div>
+                        <button type="submit" class="btn btn-primary me-1" data-bs-dismiss="modal">Add Worker</button>
+                        <button type="button" class="btn btn-secondary me-1" data-bs-dismiss="modal">Close</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--poglej delavca-->
+    <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title text-center text-primary" id="exampleModalLabel"><b>Worker Details</b></h5>
+                
+                </div>
+                <div class="modal-body">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td scope="row"><b>Name:</b></td>
+                                <td>{{workerDetailsFormView.get('name')?.value}}</td>
+                            </tr>
+                            <tr>
+                                <td scope="row"><b>Surname:</b></td>
+                                <td>{{workerDetailsFormView.get('surname')?.value}}</td>
+                            </tr>
+                            <tr>
+                                <td scope="row"><b>Id:</b></td>
+                                <td>{{workerDetailsFormView.get('id')?.value}}</td>
+                            </tr>
+                            <tr>
+                                <td scope="row"><b>Working position:</b></td>
+                                <td>{{workerDetailsFormView.get('workingPosition')?.value}}</td>
+                            </tr>
+                            <tr>
+                                <td scope="row"><b>Date of joining:</b></td>
+                                <td>{{workerDetailsFormView.get('doy')?.value}}</td>
+                            </tr>
+                            <tr>
+                                <td scope="row"><b>Date of birth:</b></td>
+                                <td>{{workerDetailsFormView.get('dob')?.value}}</td>
+                            </tr>
+                            <tr>
+                                <td scope="row"><b>E-mail:</b></td>
+                                <td>{{workerDetailsFormView.get('email')?.value}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+    <!--uredi delavca-->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary" id="exampleModalLabel"><b>Add Worker</b></h5>
+                </div>
+                <div class="modal-body">
+
+                    <form [formGroup]="workerDetailsFormView" (ngSubmit)="updateWorker()"> 
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingName" placeholder="full name" formControlName="name" value="workerDetailsFormView.get('name').value"> 
+                            <label for="floatingName">Name</label>
+                            <div *ngIf="workerDetailsFormView.controls.name.invalid && workerDetailsFormView.controls.name.touched && workerDetailsFormView.controls.name.errors">
+                                <div *ngIf="workerDetailsFormView.controls.name.errors['required']" style="color:red;">Name must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingSurname" placeholder="full surname" formControlName="surname" value="workerDetailsFormView.get('surname').value">
+                            <label for="floatingSurname">Surname</label>
+                            <div *ngIf="workerDetailsFormView.controls.surname.invalid && workerDetailsFormView.controls.surname.touched && workerDetailsFormView.controls.surname.errors">
+                                <div *ngIf="workerDetailsFormView.controls.surname.errors['required']" style="color:red;">Surname must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingId" placeholder="full id" formControlName="id" value="workerDetailsFormView.get('id').value">
+                            <label for="floatingId">Id</label>
+                            <div *ngIf="workerDetailsFormView.controls.id.invalid && workerDetailsFormView.controls.id.touched && workerDetailsFormView.controls.id.errors">
+                                <div *ngIf="workerDetailsFormView.controls.id.errors['required']" style="color:red;">Id must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="floatingWorkingPosition" placeholder="full working position title" formControlName="workingPosition" value="workerDetailsFormView.get('workingPosition).value">
+                            <label for="floatingWorkingPosition">Working position</label>
+                            <div *ngIf="workerDetailsFormView.controls.workingPosition.invalid && workerDetailsFormView.controls.workingPosition.touched && workerDetailsFormView.controls.workingPosition.errors">
+                                <div *ngIf="workerDetailsFormView.controls.workingPosition.errors['required']" style="color:red;">Working position must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="floatingDateOfJoining" formControlName="doy" value="workerDetailsFormView.get('doy').value">
+                            <label for="floatingDateOfJoining">Date of Joining</label>
+                            <div *ngIf="workerDetailsFormView.controls.doy.invalid && workerDetailsFormView.controls.doy.touched && workerDetailsFormView.controls.doy.errors">
+                                <div *ngIf="workerDetailsFormView.controls.doy.errors['required']" style="color:red;">Date of joining must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="date" class="form-control" id="floatingDateOfBirth" formControlName="dob" value="workerDetailsFormView.get('dob').value">
+                            <label for="floatingDateOfBirth">Date of Birth</label>
+                            <div *ngIf="workerDetailsFormView.controls.dob.invalid && workerDetailsFormView.controls.dob.touched && workerDetailsFormView.controls.dob.errors">
+                                <div *ngIf="workerDetailsFormView.controls.dob.errors['required']" style="color:red;">Date of birth must not be empty</div> 
+                            </div> 
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="floatingEmail" placeholder="full email" formControlName="email" value="workerDetailsFormView.get('email').value">
+                            <label for="floatingEmail">Email</label>
+                            <div *ngIf="workerDetailsFormView.controls.email.invalid && workerDetailsFormView.controls.email.touched && workerDetailsFormView.controls.email.errors">
+                      
+                                <div *ngIf="workerDetailsFormView.controls.email.errors['required']" style="color:red;">Email must not be empty</div> 
+                                <div *ngIf="workerDetailsFormView.controls.email.errors['email']" style="color:red;">Email is not correctly formulated</div>
+                              
+                              </div> 
+                        </div>
+                        <button type="submit" class="btn btn-primary me-1" data-bs-dismiss="modal">Update Worker</button>
+                        <button type="button" class="btn btn-secondary me-1" data-bs-dismiss="modal">Close</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  
+
+
+
+</div>
